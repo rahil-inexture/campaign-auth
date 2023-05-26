@@ -2,12 +2,14 @@ package com.campaign.controller;
 
 import java.util.Date;
 import java.util.Optional;
+import java.util.UUID;
 
 import org.apache.kafka.common.Uuid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -36,7 +38,7 @@ public class AuthController {
 	@Autowired
 	private PasswordEncoder passwordEncoder;
 	
-	@PostMapping("/authenticate")
+	@PostMapping("/login")
 	public ResponseEntity<String> authenticate(@RequestBody UserDto userDto){
 		Optional<User> optionalUser = userRepository.findByEmail(userDto.getEmail());
 		
@@ -45,7 +47,6 @@ public class AuthController {
 			boolean valid = passwordEncoder.matches(userDto.getPassword(), userEntity.getPassword());
 			if(valid) {
 				String jwtToken = jwtTokenService.generateToken(userEntity);
-				
 				Date  expiresAt = jwtTokenService.extractExpiration(jwtToken);
 				Date issuedAt = jwtTokenService.extractIssuedAt(jwtToken);
 				
@@ -61,6 +62,19 @@ public class AuthController {
 			}
 		}    	
 		return new ResponseEntity<>("Invalid Credential", HttpStatus.OK);
+	}
+	
+	@PostMapping("/register")
+	public ResponseEntity<User> createUser(@RequestBody User user){
+		user.setPassword(passwordEncoder.encode(user.getPassword()));
+		user.setUuid(UUID.randomUUID().toString());
+		userRepository.save(user);
+		return new ResponseEntity<>(user, HttpStatus.CREATED);
+	}
+	
+	@GetMapping("/hello")
+	public ResponseEntity<String> hello(){
+		return new ResponseEntity<>("Hello user", HttpStatus.OK);
 	}
 
 }

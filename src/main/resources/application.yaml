@@ -1,5 +1,5 @@
 server:
-  port: 8060
+  port: 8080
 
 eureka:
   client:
@@ -28,7 +28,7 @@ spring:
             client-id: d3fa5a1b-9606-469a-931c-b6b0d06a9522
             client-secret: xiv8Q~2MjHUZj_2ZJekfRHctFrFj4nfaR0pxob~4
             client-name: Azure
-            redirect-uri: http://localhost:8060/login/oauth2/code/
+            redirect-uri: http://localhost:8080/login/oauth2/code/
             scope: openid,email, profile, offline_access
         provider:
           azure:
@@ -47,7 +47,7 @@ spring:
     database-platform: org.hibernate.dialect.PostgreSQLDialect
     show-sql: true
     hibernate:
-      ddl-auto: create
+      ddl-auto: update
       
 jwt:
   secret: xiv8Q~2MjHUZj_2ZJekfRHctFrFj4nfaR0pxob~4
